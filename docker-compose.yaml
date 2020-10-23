@@ -1,0 +1,70 @@
+version: '3.5'
+
+services:
+
+  keycloak:
+    image: jboss/keycloak:11.0.1
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=password
+      - DB_ADDR=mariadb
+      - DB_USER=keycloak
+      - DB_PASSWORD=password
+      - DB_VENDOR=mariadb
+      - X509_CA_BUNDLE=/tmp/certs/ca.crt
+    container_name: keycloak
+    volumes:
+      - ./certs/keycloak.key:/etc/x509/https/tls.key
+      - ./certs/keycloak.crt:/etc/x509/https/tls.crt
+      - ./certs/rootCA.crt:/tmp/certs/ca.crt
+      - ./keycloak/export:/tmp/realm-config
+    command:
+      [
+        '-Dkeycloak.migration.action=import',
+        '-Dkeycloak.migration.provider=dir',
+        '-Dkeycloak.migration.dir=/tmp/realm-config',
+        '-Dkeycloak.migration.strategy=IGNORE_EXISTING',
+      ]
+    networks:
+      - keycloak-network
+    ports:
+      # HTTP
+      - 8080:8080
+      # HTTPS
+      - 8443:8443
+    depends_on:
+      - mariadb
+
+  mariadb:
+    image: mariadb:10.5.5
+    environment:
+      - MYSQL_DATABASE=keycloak
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=keycloak
+      - MYSQL_PASSWORD=password
+    container_name: keycloak-mariadb
+    networks:
+      - keycloak-network
+    volumes:
+      - vol-mariadb:/var/lib/mysql
+
+  js-console:
+    build: ./js-console
+    image: js-console
+    ports:
+      - 8000:80
+    container_name: keycloak-js-console
+    # For debugging
+    # volumes:
+    #   - ./js-console/src/index.html:/usr/share/nginx/html/index.html
+    #   - ./js-console/src/keycloak.json:/usr/share/nginx/html/keycloak.json
+    #   - ./js-console/src/KeycloakSilent.js:/usr/share/nginx/html/KeycloakSilent.js
+    networks:
+      - keycloak-network
+
+networks:
+  keycloak-network:
+    name: local
+
+volumes:
+  vol-mariadb:
