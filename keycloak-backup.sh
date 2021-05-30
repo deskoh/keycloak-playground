@@ -3,15 +3,13 @@
 mkdir keycloak-backup
 chmod 777 keycloak-backup
 
-docker run --rm\
+docker run --rm \
     --name keycloak_exporter \
-    --network keycloak-network \
+    --network local \
     -v $(pwd)/keycloak-backup:/tmp/realm-config:Z\
     -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=password \
     -e DB_VENDOR=mariadb -e DB_ADDR=mariadb -e DB_USER=keycloak -e DB_PASSWORD=password \
-    -e X509_CA_BUNDLE=/tmp/certs/ca.crt \
-    -v $(pwd)/certs/rootCA.crt:/tmp/certs/ca.crt \
-    jboss/keycloak:11.0.1 \
+    jboss/keycloak:11.0.3 \
     -Dkeycloak.migration.action=export \
     -Dkeycloak.migration.provider=dir \
     -Dkeycloak.migration.dir=/tmp/realm-config \
