@@ -27,6 +27,10 @@ docker volume prune
 
 To support silent refresh, cross-site cookie is required. However, most browsers require cookies with `SameSite=None` attribute (i.e. cross-site cookies) to also have the `Secure` attribute. Therefore, KeyCloak need to be accessede via HTTPS. The `frame-ancestors=self` property for the realm `Content-Security-Policy` needs to be removed as well.
 
+## Disabling Refresh Token
+
+Refresh token can now be disabled under client settings: `OpenID Connect Compatibility Modes -> Use Refresh Tokens` in Keycloak v13.
+
 ## How it works
 
 ### Third-Party Cookies Check

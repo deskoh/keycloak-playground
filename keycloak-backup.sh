@@ -9,7 +9,7 @@ docker run --rm \
     -v $(pwd)/keycloak-backup:/tmp/realm-config:Z\
     -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=password \
     -e DB_VENDOR=mariadb -e DB_ADDR=mariadb -e DB_USER=keycloak -e DB_PASSWORD=password \
-    jboss/keycloak:12.0.4 \
+    jboss/keycloak:13.0.1 \
     -Dkeycloak.migration.action=export \
     -Dkeycloak.migration.provider=dir \
     -Dkeycloak.migration.dir=/tmp/realm-config \
