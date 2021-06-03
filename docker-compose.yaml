@@ -11,12 +11,8 @@ services:
       - DB_USER=keycloak
       - DB_PASSWORD=password
       - DB_VENDOR=mariadb
-      - X509_CA_BUNDLE=/tmp/certs/ca.crt
     container_name: keycloak
     volumes:
-      - ./certs/keycloak.key:/etc/x509/https/tls.key
-      - ./certs/keycloak.crt:/etc/x509/https/tls.crt
-      - ./certs/rootCA.crt:/tmp/certs/ca.crt
       - ./keycloak/export:/tmp/realm-config
     command:
       [
@@ -30,8 +26,6 @@ services:
     ports:
       # HTTP
       - 8080:8080
-      # HTTPS
-      - 8443:8443
     depends_on:
       - mariadb
 
@@ -54,11 +48,6 @@ services:
     ports:
       - 8000:80
     container_name: keycloak-js-console
-    # For debugging
-    # volumes:
-    #   - ./js-console/src/index.html:/usr/share/nginx/html/index.html
-    #   - ./js-console/src/keycloak.json:/usr/share/nginx/html/keycloak.json
-    #   - ./js-console/src/KeycloakSilent.js:/usr/share/nginx/html/KeycloakSilent.js
     networks:
       - keycloak-network
 

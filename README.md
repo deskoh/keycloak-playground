@@ -1,123 +1,54 @@
-# KeyCloak Playground
-
-## QuickStart
-
-> Silent refresh / SSO-check requires Keycloak HTTPS for Third-Party Cookies support.
-
-```sh
-docker-compose build
-docker-compose up
-# Install CA at https://keycloak.127.0.0.1.nip.io:8443
-# Access http://js-console.127.0.0.1.nip.io:8000/ (login: alice / password)
-
-# Clean up
-docker-compose rm
-docker volume prune
-```
+# KeyCloak Playground for Access Token
 
 ## Accessing Keycloak
 
-* URL: http://keycloak.127.0.0.1.nip.io:8080 / https://keycloak.127.0.0.1.nip.io:8443
+* URL: http://keycloak.127.0.0.1.nip.io:8080
 
 * Username: `admin`
 
 * Password: `password`
 
-## Public Client Authentication Code Flow with PKCE and Silent Refresh
+* OpenID Endpoint Configuration: http://keycloak.127.0.0.1.nip.io:8080/auth/realms/dev/.well-known/openid-configuration
 
-To support silent refresh, cross-site cookie is required. However, most browsers require cookies with `SameSite=None` attribute (i.e. cross-site cookies) to also have the `Secure` attribute. Therefore, KeyCloak need to be accessede via HTTPS. The `frame-ancestors=self` property for the realm `Content-Security-Policy` needs to be removed as well.
-
-## How it works
-
-### Third-Party Cookies Check
-
-A hidden `iframe` [`step1.htm`](https://keycloak.127.0.0.1.nip.io:8443/auth/realms/dev/protocol/openid-connect/3p-cookies/step1.html) is created. This will set 3rd party cookies and redirect to [`step2.htm`](https://keycloak.127.0.0.1.nip.io:8443/auth/realms/dev/protocol/openid-connect/3p-cookies/step2.html). The 3rd party cookie values will be read and the result posted back to parent. See the [limitations](https://www.keycloak.org/docs/latest/securing_apps/#browsers-with-blocked-third-party-cookies) for browsers with blocked third-party cookies.
-
-### [Single-Sign Out Detection](https://www.keycloak.org/docs/latest/securing_apps/#session-status-iframe)
-
-A hidden iframe [`login-status-iframe.html`](https://keycloak.127.0.0.1.nip.io:8443/auth/realms/dev/protocol/openid-connect/login-status-iframe.html) will check for Single-Sign Out.
-
-## Refresh Token Behavior
-
-Default configuration for Refresh Token
-
-* 30m expiry.
-
-* New refresh token issued will have expiry extended during refresh request.
-
-* Refresh token can be used multiple times
-
-* After logging out from Keycloak, refresh token will be inactive
-
-   ```json
-   {
-     "error": "invalid_grant",
-     "error_description": "Session not active"
-   }
-   ```
-
-When `Revoke Refresh Token` is enabled with `Refresh Token Max Reuse` count set to 0.
-
-* Refresh token can only be used at most once (i.e. cannot be reuse).
-
-   ```json
-   {
-     "error": "invalid_grant",
-     "error_description": "Maximum allowed refresh token reuse exceeded"
-   }
-   ```
-
-* When a user logs in again and a refresh token is issued, refresh token associated with previous login session becomes stale.
-
-   ```json
-   {
-       "error": "invalid_grant",
-       "error_description": "Stale token"
-   }
-   ```
-
-When `Revoke Refresh Token` is enabled with `Refresh Token Max Reuse` count set to 1.
-
-* Refresh token can only be used at most twice (i.e. reuse once).
-
-* When a refresh token is used
-
-   ```json
-   {
-       "error": "invalid_grant",
-       "error_description": "Stale token"
-   }
-   ```
-
-## SSL Setup
+## Access Token
 
 ```sh
-# Generate CA key and cert
-openssl req -x509 -nodes -jsnewkey rsa:2048 -keyout rootCA.key \
-  -days 3650 -out rootCA.crt \
-  -subj "/C=SG/OU=www.org/O=MyOrg, Inc./CN=My Org Root CA"
-
-# Generate CSR for keycloak
-openssl req -newkey rsa:2048 -nodes -keyout keycloak.key \
-  -new -out keycloak.csr \
-  -subj "/C=SG/L=Singapore/O=MyOrg, Inc./CN=keycloak" \
-  -addext "subjectAltName=DNS:localhost,DNS:keycloak.127.0.0.1.nip.io" \
-  -addext "keyUsage=digitalSignature,keyEncipherment"
-
-# Generate CA signed cert for keycloak
-openssl x509 -in keycloak.csr \
-  -CA rootCA.crt -CAkey rootCA.key -CAcreateserial \
-  -req -days 3650 -out keycloak.crt \
-  -extfile <(printf "subjectAltName=DNS:localhost,DNS:keycloak,DNS:keycloak.127.0.0.1.nip.io")
-
-# Verify certs
-openssl verify -verbose -CAfile rootCA.crt keycloak.crt
+# Get Access Token for `api` client`
+curl -X POST 'http://keycloak.127.0.0.1.nip.io:8080/auth/realms/dev/protocol/openid-connect/token' \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'grant_type=password' \
+  --data-urlencode 'username=user1' \
+  --data-urlencode 'password=password' \
+  --data-urlencode 'scope=api' \
+  --data-urlencode 'client_id=webclient'
 ```
 
-SSL / TLS debugging
+Decoded Access Token:
 
-```sh
-openssl s_client -connect localhost:8443
+```json
+{
+  "exp": 1622730164,
+  "iat": 1622726564,
+  "jti": "db3db14e-94fa-47c3-8630-3d1d6c7e8bcd",
+  "iss": "http://keycloak.127.0.0.1.nip.io:8080/auth/realms/dev",
+  "aud": [
+    "api",
+    "webserver"
+  ],
+  "sub": "e5346bc2-dd9f-4df8-8d0d-76e49d819811",
+  "typ": "Bearer",
+  "azp": "webclient",
+  "session_state": "8180d144-c84c-4aba-af88-9aa59d50d4fa",
+  "acr": "1",
+  "resource_access": {
+    "api": {
+      "roles": ["default"]
+    },
+    "webserver": {
+      "roles": ["default"]
+    }
+  },
+  "scope": "api",
+  "groups": ["GroupA"]
+}
 ```
-
-## References / Resources

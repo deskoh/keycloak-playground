@@ -1,29 +1,26 @@
 {
   "realm" : "dev",
   "users" : [ {
-    "id" : "6ba13576-1514-4910-8841-c7d0ce699c56",
-    "createdTimestamp" : 1603351721816,
-    "username" : "alice",
+    "id" : "e5346bc2-dd9f-4df8-8d0d-76e49d819811",
+    "createdTimestamp" : 1622724649698,
+    "username" : "user1",
     "enabled" : true,
     "totp" : false,
-    "emailVerified" : true,
-    "firstName" : "Alice",
-    "lastName" : "Amber",
-    "email" : "alice@example.org",
+    "emailVerified" : false,
     "credentials" : [ {
-      "id" : "d2b7ba95-8e33-420d-a6f1-b56e427c5022",
+      "id" : "ed65863e-d4a6-448e-b70b-17a97ee6ab01",
       "type" : "password",
-      "createdDate" : 1603352137101,
-      "secretData" : "{\"value\":\"ylFG0ANqldHWydnWWSsliamKlnzOmgNJNwTAQAoNzFrs7C8vJi1kbopI3tEZRIVy0vyXPUJZ4LGNV84ihTl0lw==\",\"salt\":\"fdhCQqjw2nNqR80bYRjLCQ==\"}",
+      "createdDate" : 1622724661851,
+      "secretData" : "{\"value\":\"pBHRxkxww44o71jBZYaQj9vo8EMWjRQlabKWVvQm5BX9k0JK50Im053r9MFSGim3KWpUD6HYszUq9jXHeEvgaw==\",\"salt\":\"44lm+7TjNs00TfeOa9J6dA==\"}",
       "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\"}"
     } ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
-    "realmRoles" : [ "uma_authorization", "offline_access" ],
+    "realmRoles" : [ "offline_access", "uma_authorization" ],
     "clientRoles" : {
-      "account" : [ "view-profile", "manage-account" ]
+      "account" : [ "manage-account", "view-profile" ]
     },
     "notBefore" : 0,
-    "groups" : [ ]
+    "groups" : [ "/GroupA" ]
   } ]
 }
