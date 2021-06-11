@@ -87,6 +87,9 @@ Decoded Access Token:
     }
   },
   "scope": "api profile",
+  "groups": [
+    "GroupA"
+  ],
   "preferred_username": "user1"
 }
 ```
