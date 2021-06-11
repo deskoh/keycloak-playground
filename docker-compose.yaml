@@ -13,6 +13,8 @@ services:
       - DB_VENDOR=mariadb
     container_name: keycloak
     volumes:
+      - ./certs/keycloak.key:/etc/x509/https/tls.key
+      - ./certs/keycloak.crt:/etc/x509/https/tls.crt
       - ./keycloak/export:/tmp/realm-config
     command:
       [
@@ -26,6 +28,8 @@ services:
     ports:
       # HTTP
       - 8080:8080
+      # HTTPS
+      - 8443:8443
     depends_on:
       - mariadb
 
