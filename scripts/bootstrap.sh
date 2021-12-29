@@ -19,7 +19,7 @@ REALM=$3
 KC_URL=${4:-http://localhost:8080}
 
 echo Authenticating Keycloak master realm at $KC_URL with $USER
-kcadm.sh config credentials --server $KC_URL/auth --realm master --user $USER --password $PASSWORD
+kcadm.sh config credentials --server $KC_URL --realm master --user $USER --password $PASSWORD
 
 echo Creating realm $REALM
 kcadm.sh create realms -s realm=$REALM -s enabled=true

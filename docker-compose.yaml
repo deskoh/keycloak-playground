@@ -3,15 +3,10 @@ version: '3.5'
 services:
 
   keycloak:
-    image: jboss/keycloak:16.1.0
+    image: quay.io/keycloak/keycloak-x:16.1.0
     environment:
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=password
-      - DB_ADDR=mariadb
-      - DB_USER=keycloak
-      - DB_PASSWORD=password
-      - DB_VENDOR=mariadb
-      - X509_CA_BUNDLE=/tmp/certs/ca.crt
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=password
     container_name: keycloak
     volumes:
       - ./certs/keycloak.key:/etc/x509/https/tls.key
@@ -20,10 +15,26 @@ services:
       - ./keycloak/export:/tmp/realm-config
     command:
       [
-        '-Dkeycloak.migration.action=import',
-        '-Dkeycloak.migration.provider=dir',
-        '-Dkeycloak.migration.dir=/tmp/realm-config',
-        '-Dkeycloak.migration.strategy=IGNORE_EXISTING',
+        # Database:
+        # '-Dkc.db=mariadb',
+        # '-Dkc.db.url.host=mariadb',
+        # '-Dkc.db.username=keycloak',
+        # '-Dkc.db.password=password',
+
+        # Hostname:
+        # Hostname to be set is strict hostname is enabled
+        #'-Dkc.hostname.strict=false',
+
+        # HTTP/TLS:
+        # Insecure requests are disabled by default in production
+        #'-Dkc.http.enabled=true',
+        # '-Dkc.hostname.strict-https=false',
+        #'-Dkc.https.certificate.file=/etc/x509/https/tls.crt',
+        #'-Dkc.https.certificate.key-file=/etc/x509/https/tls.key',
+
+        # 'start-dev'
+        'start',
+        '--auto-build --db=mariadb --db-url-host=mariadb --db-username=keycloak --db-password=password --hostname-strict=false --http-enabled=true'
       ]
     networks:
       - keycloak-network
@@ -43,6 +54,8 @@ services:
       - MYSQL_USER=keycloak
       - MYSQL_PASSWORD=password
     container_name: keycloak-mariadb
+    # healthcheck:
+    #     test: ['CMD', 'mysqladmin', 'ping', '--silent']
     networks:
       - keycloak-network
     volumes:
