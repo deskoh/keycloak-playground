@@ -17,7 +17,7 @@ cd keycloak
 ```sh
 KC_URL=http://localhost:8080
 # Keycloak session stored in `~/.keycloak/kcadm.config`
-./kcadm.sh config credentials --server $KC_URL/auth --realm master --user admin --password password
+./kcadm.sh config credentials --server $KC_URL --realm master --user admin --password password
 ```
 
 ## Example Operations

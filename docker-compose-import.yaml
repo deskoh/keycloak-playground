@@ -1,0 +1,51 @@
+version: '3.5'
+
+services:
+
+  import:
+    image: quay.io/keycloak/keycloak:17.0.0
+    environment:
+      - KC_DB=mariadb
+      - KC_DB_URL_HOST=mariadb
+      - KC_DB_USERNAME=keycloak
+      - KC_DB_PASSWORD=password
+    container_name: keycloak-import
+    volumes:
+      - ./keycloak/export:/tmp/realm-config
+    command:
+      [
+        # '-Dkeycloak.migration.action=import',
+        # '-Dkeycloak.migration.provider=dir',
+        # '-Dkeycloak.migration.dir=/tmp/realm-config',
+        # '-Dkeycloak.migration.strategy=IGNORE_EXISTING',
+        # 'start-dev'
+        'import --dir /tmp/realm-config'
+      ]
+    networks:
+      - keycloak-network
+
+  export:
+    image: quay.io/keycloak/keycloak:17.0.0
+    environment:
+      - KC_DB=mariadb
+      - KC_DB_URL_HOST=mariadb
+      - KC_DB_USERNAME=keycloak
+      - KC_DB_PASSWORD=password
+    container_name: keycloak-export
+    volumes:
+      - ./keycloak/export:/tmp/realm-config
+    command:
+      [
+        # '-Dkeycloak.migration.action=export',
+        # '-Dkeycloak.migration.provider=dir',
+        # '-Dkeycloak.migration.dir=/tmp/realm-config',
+        # '-Dkeycloak.migration.usersExportStrategy=SAME_FILE',
+        # 'start-dev'
+        'export --dir /tmp/realm-config --users same_file'
+      ]
+    networks:
+      - keycloak-network
+
+networks:
+  keycloak-network:
+    name: local

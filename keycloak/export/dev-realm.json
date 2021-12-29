@@ -2,6 +2,7 @@
   "id" : "dev",
   "realm" : "dev",
   "notBefore" : 0,
+  "defaultSignatureAlgorithm" : "RS256",
   "revokeRefreshToken" : false,
   "refreshTokenMaxReuse" : 0,
   "accessTokenLifespan" : 300,
@@ -362,8 +363,6 @@
   "webAuthnPolicyPasswordlessCreateTimeout" : 0,
   "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister" : false,
   "webAuthnPolicyPasswordlessAcceptableAaguids" : [ ],
-  "clientProfiles" : { },
-  "clientPolicies" : { },
   "scopeMappings" : [ {
     "clientScope" : "offline_access",
     "roles" : [ "offline_access" ]
@@ -1750,11 +1749,24 @@
   "clientAuthenticationFlow" : "clients",
   "dockerAuthenticationFlow" : "docker auth",
   "attributes" : {
+    "cibaBackchannelTokenDeliveryMode" : "poll",
+    "cibaExpiresIn" : "120",
+    "cibaAuthRequestedUserHint" : "login_hint",
+    "oauth2DeviceCodeLifespan" : "600",
     "clientOfflineSessionMaxLifespan" : "0",
+    "oauth2DevicePollingInterval" : "600",
     "clientSessionIdleTimeout" : "0",
+    "parRequestUriLifespan" : "60",
     "clientSessionMaxLifespan" : "0",
-    "clientOfflineSessionIdleTimeout" : "0"
+    "clientOfflineSessionIdleTimeout" : "0",
+    "cibaInterval" : "5"
   },
-  "keycloakVersion" : "13.0.1",
-  "userManagedAccessAllowed" : false
+  "keycloakVersion" : "17.0.0",
+  "userManagedAccessAllowed" : false,
+  "clientProfiles" : {
+    "profiles" : [ ]
+  },
+  "clientPolicies" : {
+    "policies" : [ ]
+  }
 }

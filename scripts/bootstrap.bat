@@ -25,7 +25,7 @@ if not defined SECRET (
 if not defined CLIENT_SECRET echo Webserver client secret is %SECRET%, use CLIENT_SECRET to override
 
 echo Authenticating Keycloak master realm at %KC_URL% with %USER%
-call kcadm config credentials --server %KC_URL%/auth --realm master --user %USER% --password %PASSWORD%
+call kcadm config credentials --server %KC_URL% --realm master --user %USER% --password %PASSWORD%
 
 echo Creating realm %REALM%
 call kcadm create realms -s realm=%REALM% -s enabled=true

@@ -6,13 +6,16 @@
 
 ```sh
 docker-compose build
-docker-compose up
+docker-compose up -d --remove-orphans
+
+# Import DB (after Keycloak is up)
+docker-compose exec keycloak /opt/keycloak/bin/kc.sh import --dir /tmp/realm-config
+
 # Install CA at https://keycloak.127.0.0.1.nip.io:8443
 # Access http://js-console.127.0.0.1.nip.io:8000/ (login: alice / password)
 
 # Clean up
-docker-compose rm
-docker volume prune
+docker-compose down -v
 ```
 
 ## Accessing Keycloak
@@ -35,11 +38,11 @@ Refresh token can now be disabled under client settings: `OpenID Connect Compati
 
 ### Third-Party Cookies Check
 
-A hidden `iframe` [`step1.htm`](https://keycloak.127.0.0.1.nip.io:8443/auth/realms/dev/protocol/openid-connect/3p-cookies/step1.html) is created. This will set 3rd party cookies and redirect to [`step2.htm`](https://keycloak.127.0.0.1.nip.io:8443/auth/realms/dev/protocol/openid-connect/3p-cookies/step2.html). The 3rd party cookie values will be read and the result posted back to parent. See the [limitations](https://www.keycloak.org/docs/latest/securing_apps/#browsers-with-blocked-third-party-cookies) for browsers with blocked third-party cookies.
+A hidden `iframe` [`step1.htm`](https://keycloak.127.0.0.1.nip.io:8443/realms/dev/protocol/openid-connect/3p-cookies/step1.html) is created. This will set 3rd party cookies and redirect to [`step2.htm`](https://keycloak.127.0.0.1.nip.io:8443/realms/dev/protocol/openid-connect/3p-cookies/step2.html). The 3rd party cookie values will be read and the result posted back to parent. See the [limitations](https://www.keycloak.org/docs/latest/securing_apps/#_modern_browsers) for browsers with blocked third-party cookies.
 
 ### [Single-Sign Out Detection](https://www.keycloak.org/docs/latest/securing_apps/#session-status-iframe)
 
-A hidden iframe [`login-status-iframe.html`](https://keycloak.127.0.0.1.nip.io:8443/auth/realms/dev/protocol/openid-connect/login-status-iframe.html) will check for Single-Sign Out.
+A hidden iframe [`login-status-iframe.html`](https://keycloak.127.0.0.1.nip.io:8443/realms/dev/protocol/openid-connect/login-status-iframe.html) will check for Single-Sign Out.
 
 ## Refresh Token Behavior
 
@@ -124,6 +127,14 @@ SSL / TLS debugging
 openssl s_client -connect localhost:8443
 ```
 
+## Keycloak Configuration
+
+1. Use environment variable: e.g. `KC_HTTPS_CERTIFICATE_FILE=/etc/x509/server.crt`
+
+1. Use command line argument: e.g. `-Dkc.https-certificate-file=/etc/x509/server.crt start auto-build ...`
+
+1. Use build options (for configuration supporting build options): e.g. `start auto-build --https-certificate-file=/etc/x509/server.crt`
+
 ## Using STEP CLI
 
 ```sh
@@ -138,5 +149,11 @@ step oauth --oidc --bare --client-id js-console --provider https://localhost:844
 ```
 
 ## References / Resources
+
+[Configuring Keycloak](https://www.keycloak.org/server/configuration)
+
+[Running Keycloak in a container](https://www.keycloak.org/server/containers)
+
+[All configuration](https://www.keycloak.org/server/all-config)
 
 [step oauth](https://smallstep.com/docs/step-cli/reference/oauth)
