@@ -124,4 +124,19 @@ SSL / TLS debugging
 openssl s_client -connect localhost:8443
 ```
 
+## Using STEP CLI
+
+```sh
+# Get raw token endpoint response
+step oauth --client-id js-console --provider https://localhost:8443/auth/realms/dev/
+
+# Get just the access_token
+step oauth --bare --client-id js-console --provider https://localhost:8443/auth/realms/dev/
+
+# Get just the id_token
+step oauth --oidc --bare --client-id js-console --provider https://localhost:8443/auth/realms/dev/
+```
+
 ## References / Resources
+
+[step oauth](https://smallstep.com/docs/step-cli/reference/oauth)
